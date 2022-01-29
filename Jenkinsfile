@@ -66,7 +66,7 @@ pipeline {
             sh """
             cd $WORKSPACE/nginx-app/Manifests
             export KUBECONFIG=admin.conf
-            kubectl create cm nginx-config-${IMAGE_VERSION} --from-file=nginx-config
+            kubectl create cm nginx-config-${IMAGE_VERSION} --from-file=default.conf
             """
         }     
     }
