@@ -81,5 +81,11 @@ pipeline {
             """
         }     
     }       
-  } 
+  }
+  post {
+    always {
+      echo "Removing Secrets"
+      sh script: 'rm -fv $WORKSPACE/nginx-app/Manifests/admin.conf'
+    }
+  }  
 }
