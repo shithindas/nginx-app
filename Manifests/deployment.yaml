@@ -23,7 +23,7 @@ spec:
         environment: production
     spec:
       containers:
-      - image: shithindas/nginx:latest
+      - image: shithindas/nginx:BUILD_ID
         imagePullPolicy: Always
         name: nginx
         ports:
@@ -57,6 +57,6 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: nginx-config
+          name: nginx-config-BUILD_ID
       restartPolicy: Always
       terminationGracePeriodSeconds: 60

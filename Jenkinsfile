@@ -2,6 +2,7 @@ pipeline {
   agent any
   environment { 
       ENV='dev'
+      DEP_NAME='nginx-deploy'
   }
   options { disableConcurrentBuilds() }
   stages {
@@ -75,6 +76,9 @@ pipeline {
             cd $WORKSPACE/nginx-app/Manifests
             export KUBECONFIG=admin.conf
             kubectl create cm nginx-config-${IMAGE_VERSION} --from-file=nginx-config
+            sed -i "s/BUILD_ID/${IMAGE_VERSION}/g" deployment.yaml
+            kubectl apply -f .
+            kubectl rollout status deployment ${DEP_NAME}
             """
         }     
     }       
