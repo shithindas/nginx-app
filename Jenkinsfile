@@ -68,6 +68,15 @@ pipeline {
             kubectl create cm nginx-config-${IMAGE_VERSION} --from-file=nginx-config
             """
         }     
+    }
+    stage('Deploy_K8S') {
+        steps {
+            sh """
+            cd $WORKSPACE/nginx-app/Manifests
+            export KUBECONFIG=admin.conf
+            kubectl create cm nginx-config-${IMAGE_VERSION} --from-file=nginx-config
+            """
+        }     
     }       
   } 
 }

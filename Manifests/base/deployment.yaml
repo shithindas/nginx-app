@@ -57,6 +57,6 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: nginx-config-v1
+          name: nginx-config
       restartPolicy: Always
       terminationGracePeriodSeconds: 60
