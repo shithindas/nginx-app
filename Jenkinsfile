@@ -72,17 +72,17 @@ pipeline {
     }
     stage('Deploy_K8S') {
         steps {
-            sh """
+            sh '''
             cd $WORKSPACE/nginx-app/Manifests
             export KUBECONFIG=admin.conf
             sed -i "s/BUILD_ID/$IMAGE_VERSION/g" deployment.yaml
             kubectl apply -f .
             if [ $? -ne 0 ] ; then
-              echo 'ERROR: Failed to Deploy.'
+              echo "ERROR: Failed to Deploy."
               exit 1
             fi
             kubectl rollout status deployment ${DEP_NAME}
-            """
+            '''
         }     
     }       
   } 
