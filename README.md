@@ -21,7 +21,7 @@ docker push shithindas/nginx-app:tagname
 
 ## Code Deployment
 
-The Code deployment to Kubernetes cluster is handled via Jenkins Job(Todo: Add link here). The pipeline performs the following: 
+The Code deployment to Kubernetes cluster is handled via Jenkins Job(Todo: Add link here). This pipeline is automatically triggered when there is any code change in the repository. The pipeline performs the following: 
 - Configures MySQL persistent volume and deploys MySQL service
 - Builds the NodeJs docker image with latest code and push to DockerHub repository.
 - Tags the image using the Combination of environment and Build number

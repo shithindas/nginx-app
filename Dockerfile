@@ -1,4 +1,5 @@
 FROM node:14
+LABEL maintainer="shithindasmk@gmail.com"
 
 #Creating app directory
 RUN mkdir -p /app
