@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment { 
-      ENV='dev'
+      ENV='prod'
       DEP_NAME='node-web'
   }
   options { disableConcurrentBuilds() }
@@ -24,11 +24,6 @@ pipeline {
         }
       }
     }
-    // stage('Login to Docker Repo') {
-    //   steps{
-    //     sh '$(aws ecr get-login --no-include-email --region us-east-1) '
-    //   }
-    // }
     stage('Build Preparations'){
       steps{
          script {
