@@ -23,7 +23,7 @@ spec:
         environment: production
     spec:
       containers:
-      - image: shithindas/nginx-app:latest
+      - image: shithindas/nginx-app:BUILD_ID ## Jenkins will replace with Build Tag 
         imagePullPolicy: Always
         name: nginx
         ports:
@@ -54,15 +54,15 @@ spec:
             path: /
             port: 3000
             scheme: HTTP
-          periodSeconds: 5
-          initialDelaySeconds: 10
+          periodSeconds: 10
+          initialDelaySeconds: 15
         readinessProbe:
           httpGet:
             path: /
             port: 3000
             scheme: HTTP
-          periodSeconds: 5
-          initialDelaySeconds: 10
+          periodSeconds: 10
+          initialDelaySeconds: 15
       - name: nginx
         image: nginx:latest  
         ports:
@@ -76,12 +76,12 @@ spec:
           httpGet:
             path: /
             port: nginx-port
-          initialDelaySeconds: 30
+          initialDelaySeconds: 15
           periodSeconds: 10
       volumes:
       - name: config-volume
         configMap:
-          name: nginx-config  
+          name: nginx-config-BUILD_ID ## Jenkins will replace with Build Tag
       restartPolicy: Always
       terminationGracePeriodSeconds: 60
 ---
