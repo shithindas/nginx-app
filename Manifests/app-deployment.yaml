@@ -34,8 +34,7 @@ spec:
         vault.hashicorp.com/role: "node-web"
         vault.hashicorp.com/agent-inject-template-db-creds: |
           {{- with secret "database/creds/pipeline" -}}
-            export MYSQL_USERNAME="{{ .Data.username }}"
-            export MYSQL_ROOT_PASSWORD="{{ .Data.password }}"        
+          mysql://{{ .Data.username }}:{{ .Data.password }}@mysql:3306/example_db        
           {{- end }}
     spec:
       serviceAccountName: node-web
