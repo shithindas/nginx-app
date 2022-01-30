@@ -15,3 +15,9 @@ MySQL root password is loaded from the secret `db-secret`.
 ```
 kubectl create secret generic db-secret --from-literal=password="<Your password>"
 ```
+
+You can connect to MySQL server via 
+
+```
+kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -u root -h mysql.default.svc.cluster.local -p<Your password>
+```
