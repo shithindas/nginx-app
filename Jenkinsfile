@@ -15,7 +15,7 @@ pipeline {
       steps {
         dir('nginx-app') {
             checkout([$class: 'GitSCM', 
-            branches: [[name: 'node']], 
+            branches: [[name: 'master']], 
             extensions: [], 
             userRemoteConfigs: [[
                 credentialsId: 'github_user',
