@@ -1,8 +1,18 @@
-FROM nginx:latest
-LABEL maintainer="shithindasmk@gmail.com"
+FROM node:14
 
-#Copying Sample app code to document root
-COPY index.html /usr/share/nginx/html
+#Creating app directory
+RUN mkdir -p /app
+WORKDIR /app
 
-#Copying Sample health check page to document root
-COPY health_check.html /usr/share/nginx/html
+#Copies package.json
+COPY package.json /app
+
+#Install NPM modules
+RUN npm install
+
+#Copies source code
+COPY . /app
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]

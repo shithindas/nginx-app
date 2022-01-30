@@ -2,7 +2,7 @@ pipeline {
   agent any
   environment { 
       ENV='dev'
-      DEP_NAME='nginx-deploy'
+      DEP_NAME='node-web'
   }
   options { disableConcurrentBuilds() }
   stages {
@@ -15,7 +15,7 @@ pipeline {
       steps {
         dir('nginx-app') {
             checkout([$class: 'GitSCM', 
-            branches: [[name: '*/master']], 
+            branches: [[name: 'node']], 
             extensions: [], 
             userRemoteConfigs: [[
                 credentialsId: 'github_user',
@@ -41,12 +41,12 @@ pipeline {
         steps {
             dir ("nginx-app") {
             script {
-                docker.build("shithindas/nginx")
+                docker.build("shithindas/nginx-app")
             }
             }
             script {
                 docker.withRegistry("https://registry.hub.docker.com", "dockerhub_user") {
-                docker.image("shithindas/nginx").push(IMAGE_VERSION)
+                docker.image("shithindas/nginx-app").push(IMAGE_VERSION)
                 }
             }
         }       
@@ -70,13 +70,25 @@ pipeline {
             """
         }     
     }
+    stage('Deploy MySQL') {
+        steps {
+            sh """
+            cd $WORKSPACE/nginx-app/Manifests
+            export KUBECONFIG=admin.conf
+            #Creating MySQL Persistant Volume on Disk
+            kubectl apply -f mysql-pv.yaml
+            #Deploying MySQL
+            kubectl apply -f mysql-deployment.yaml
+            """
+        }     
+    }
     stage('Deploy_K8S') {
         steps {
             sh """
             cd $WORKSPACE/nginx-app/Manifests
             export KUBECONFIG=admin.conf
-            sed -i 's/BUILD_ID/${IMAGE_VERSION}/g' deployment.yaml
-            kubectl apply -f .
+            sed -i 's/BUILD_ID/${IMAGE_VERSION}/g' app-deployment.yaml
+            kubectl apply -f app-deployment.yaml
             kubectl rollout status deployment ${DEP_NAME}
             """
         }     

@@ -1,0 +1,121 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: node-web
+    environment: production
+  name: node-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-web
+      environment: production
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: node-web
+        environment: production
+    spec:
+      serviceAccountName: node-web
+      containers:
+      - image: shithindas/nginx-app:BUILD_ID ## Jenkins will replace with Build Tag 
+        imagePullPolicy: Always
+        name: node
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+         - name: MYSQL_HOST
+           value: mysql.default.svc.cluster.local
+         - name: MYSQL_USERNAME
+           value: "root"        
+         - name: MYSQL_ROOT_PASSWORD
+           valueFrom:
+             secretKeyRef:
+              name: db-secret
+              key: password
+         - name: MYSQL_DATABASE
+           value: "example_db"
+         - name: MYSQL_LOCAL_PORT
+           value: "3306"
+         - name: NODE_LOCAL_PORT
+           value: "3000"
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 50m
+          limits:
+            memory: 300Mi
+            cpu: 100m
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 10
+          initialDelaySeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 10
+          initialDelaySeconds: 15
+      - name: nginx
+        image: nginx:latest  
+        ports:
+        - name: nginx-port 
+          containerPort: 80
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 50m
+          limits:
+            memory: 300Mi
+            cpu: 100m
+        readinessProbe:
+          httpGet:
+            path: /
+            port: nginx-port
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      volumes:
+      - name: config-volume
+        configMap:
+          name: nginx-config-BUILD_ID ## Jenkins will replace with Build Tag
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: node-web
+    environment: production
+  name: node-web
+spec:
+  ports:
+  - nodePort: 30160
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: node-web
+    environment: production
+  type: NodePort
