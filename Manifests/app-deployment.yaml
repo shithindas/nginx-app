@@ -25,7 +25,7 @@ spec:
       containers:
       - image: shithindas/nginx-app:BUILD_ID ## Jenkins will replace with Build Tag 
         imagePullPolicy: Always
-        name: nginx
+        name: node
         ports:
         - containerPort: 3000
           protocol: TCP
